@@ -1,3 +1,4 @@
+#coding=utf-8
 def del_cvs_col(fname,newfname,idxs):
     with open(fname) as reader, open(newfname, 'w') as writer:
         for line in reader:

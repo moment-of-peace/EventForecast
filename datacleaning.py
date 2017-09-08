@@ -1,3 +1,10 @@
+'''
+    This file cleans the data according to the set colomns' value
+    The different data will be copied into different files
+    it contains several functions that are useful
+'''
+#coding=utf-8
+
 import os
 count = 0
 flist = os.listdir('../extracted')
@@ -26,3 +33,7 @@ for f in flist:
 logger = open('cleaning.log','a',encoding='utf-8')
 logger.write('final count is:'+str(count))
 logger.close()
+'''
+    function for removing the url
+'''
+
