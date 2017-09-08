@@ -24,6 +24,7 @@ for f in flist:
     line = src.readline().strip('\n')
 
     while line != '':
+        columns = line.split('\t')
         for i in countryCol:
             if columns[i] == countryName: # match country
                 # do something
