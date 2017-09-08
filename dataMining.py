@@ -20,9 +20,14 @@ flist = os.listdir(dirctory)  # all files in the directory
 for f in flist:
     filename = dirctory + f     # file name
     src = open(filename, 'rt') # source file
+    
+    newPath= r'out-'+directory
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+    
     out = open('out-' + filename, 'wt') # output file
     line = src.readline().strip('\n')
-
+   
     while line != '':
         columns = line.split('\t')
         for i in countryCol:
