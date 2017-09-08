@@ -1,6 +1,10 @@
 import os
 count = 0
 flist = os.listdir('../extracted')
+
+col = [36]
+content = 'Australia'
+
 for f in flist:
         logger = open('cleaning1.log','a',encoding='utf-8')
         tmp = f.split('.')[0]
@@ -8,10 +12,12 @@ for f in flist:
         input = open('../extracted/'+f,'r',encoding='utf-8')
         output = open('../ausdata1/'+thisyear+'.csv','a',encoding='utf-8')
         for line in input:
-                coloumns = line.split('\t')
-                if coloumns[7] == 'AUS' or coloumns[15] == 'AUS' or coloumns[17] == 'AUS' or coloumns[51] == 'AS':
+                columns = line.split('\t')
+                for i in col:
+                    if columns[i] == content:
                         output.write(line)
                         count += 1
+                
         output.close()
         input.close()
         logger.write(f+'  ')
