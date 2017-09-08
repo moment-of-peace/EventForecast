@@ -31,7 +31,7 @@ for f in flist:
                  
                 key=columns[targetCol][0]+columns[targetCol][1]
                 if key in dictionary:
-                    dictionary[key]++
+                    dictionary[key]=dictionary[key]+1
                 else:
                     dictionary[key]=1;
         line = src.readline().strip('\n')
