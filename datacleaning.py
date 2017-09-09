@@ -51,7 +51,8 @@ def del_cvs_col(fname,newfname,idxs,count):
         for i in range(0,len(items)):
             if i not in idxs:
                 string += items[i]+'\t'
-        print(string)
         writer.write(string+'\n')
         line_count += 1
+    writer.close()
+    reader.close()
     return line_count
