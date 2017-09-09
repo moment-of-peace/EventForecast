@@ -1,4 +1,5 @@
-def log(str, logpath):
+import datetime
+def log(s, logpath):
 	with open(logpath, 'a', encoding='utf-8') as logfile:
-		logfile.write(str+'\n')
+		logfile.write(s+' '+str(datetime.datetime.now())+'\n')
 		logfile.close()

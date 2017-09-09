@@ -1,39 +1,57 @@
+import logger
 '''
-    This file cleans the data according to the set colomns' value
-    The different data will be copied into different files
-    it contains several functions that are useful
+    This file contains a set of functions that is helpful for cleaning data and copy designated data
+    into the new files
 '''
-#coding=utf-8
+logpath = 'cleaning.log'
 
-import os
-count = 0
-flist = os.listdir('../extracted')
+'''
+    this function is used for extracting the events that are satisfied with the set value of specified column
+    parameters:
+        fname: the name of readed file
+        oname: the name of writed file
+        col: the index of the column
+        value: the value of colnum
+        writerpath: the path of the directory of cleaned data
+        @return line_count: the count of copied lines
+'''
 
-col = [36]
-content = 'Australia'
-
-for f in flist:
-    logger = open('cleaning1.log','a',encoding='utf-8')
-    tmp = f.split('.')[0]
-    thisyear = tmp[0:4]
-    input = open('../extracted/'+f,'r',encoding='utf-8')
-    output = open('../ausdata1/'+thisyear+'.csv','a',encoding='utf-8')
-    for line in input:
+def get_specified_data(fname,oname,col,value,count):
+    line_count = 0
+    reader = open(fname, 'r', encoding='utf-8')
+    writer = open(oname, 'a', encoding='utf-8')
+    for line in reader:
         columns = line.split('\t')
         for i in col:
-            if columns[i] == content:
-                output.write(line)
-                count += 1
-                
-    output.close()
-    input.close()
-    logger.write(f+'  ')
-    logger.write('current count is:'+str(count)+'\n')
-    logger.close()
-logger = open('cleaning.log','a',encoding='utf-8')
-logger.write('final count is:'+str(count))
-logger.close()
+            if columns[i] == value:
+                writer.write(line)
+                line_count += 1
+    reader.close()
+    writer.close()
+    logger.log(str(fname + '  '+'current count is:' + str(count)),logpath)
+    return line_count
+
 '''
-    function for removing the url
+    function for extracting the events happened in the wanted countries
+    parameter:
+        fname: the name of the file that if to be read
+        newfname: the name of output file
+        idxs: the columns that should be excluded in the output files
+        @return line_count
 '''
 
+def del_cvs_col(fname,newfname,idxs,count):
+    line_count = 0
+    reader = open(fname, 'r', encoding='utf-8')
+    writer = open(newfname, 'a', encoding='utf-8')
+    for line in reader:
+        items = line.split('\t')
+        string = ''
+        print(len(items))
+        for i in range(0,len(items)):
+            if i not in idxs:
+                string += items[i]+'\t'
+        print(string)
+        writer.write(string+'\n')
+        line_count += 1
+    return line_count
