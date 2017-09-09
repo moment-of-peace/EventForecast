@@ -2,9 +2,9 @@
  A group data mining project using Python that aim at predicting the probability of occurence of particular events and analyzing their influences to Australia.
 
 ##Data Format for data from 2014-present
-⋅⋅1 GLOBALEVENTID
-⋅⋅2 SQLDATE
-⋅⋅3 MonthYear
+⋅⋅1. GLOBALEVENTID
+⋅⋅2. SQLDATE
+⋅⋅3. MonthYear
 ⋅⋅4 Year
 ⋅⋅5 FractionDate
 ⋅⋅6 Actor1Code
