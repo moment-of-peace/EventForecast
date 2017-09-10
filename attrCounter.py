@@ -13,7 +13,7 @@ import os
 
 dirctory = ''
 countryCol = [36] # the column index of country name
-countryName = 'Australia' # the country to be extracted
+countryName = 'Australia' # the country to be extracted 
 targetCol = 0
 
 flist = os.listdir(dirctory)  # all files in the directory
