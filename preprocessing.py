@@ -48,6 +48,7 @@ def get_specified_data(path, countryColumn, country, attrColumn):
         logger.log('attr processing of ' + fname + ' finished',logpath) # log info after each file is processed
     return newpath
 
+# write a dictionary to a file
 def dict_writer(writer, dictionary):
     for key, value in dictionary.items():
         writer.write(key + ': ' + str(value) + '\n')
