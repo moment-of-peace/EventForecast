@@ -48,6 +48,10 @@ def get_specified_data(path, countryColumn, country, attrColumn):
         logger.log('attr processing of ' + fname + ' finished',logpath) # log info after each file is processed
     return newpath
 
+<<<<<<< HEAD
+# write a dictionary to a file
+=======
+>>>>>>> yi
 def dict_writer(writer, dictionary):
     for key, value in dictionary.items():
         writer.write(key + ': ' + str(value) + '\n')
@@ -74,7 +78,11 @@ def del_columns(path, idxs):
             items=line.strip('\n').split('\t')
             string=''
             for i in range(0,len(items)):
+<<<<<<< HEAD
+                if i not in idxs:
+=======
                 if i in idxs:
+>>>>>>> yi
                     string = string + items[i]+'\t'
             writer.write(string+'\n')
         writer.close()
