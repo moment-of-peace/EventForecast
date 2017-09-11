@@ -74,7 +74,7 @@ def del_columns(path, idxs):
             items=line.strip('\n').split('\t')
             string=''
             for i in range(0,len(items)):
-                if i not in idxs:
+                if i in idxs:
                     string = string + items[i]+'\t'
             writer.write(string+'\n')
         writer.close()
