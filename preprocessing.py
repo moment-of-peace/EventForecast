@@ -51,7 +51,7 @@ def get_specified_data(path, countryColumn, country, attrColumn):
 # write a dictionary to a file
 def dict_writer(writer, dictionary):
     for key, value in dictionary.items():
-        writer.write(key + ': ' + str(value) + '\n')
+        writer.write(key + ':' + str(value) + '\n')
 
 '''
     function for extracting the events happened in the wanted countries
@@ -75,7 +75,7 @@ def del_columns(path, idxs):
             items=line.strip('\n').split('\t')
             string=''
             for i in range(0,len(items)):
-                if i in idxs:
+                if i not in idxs:
                     string = string + items[i]+'\t'
             writer.write(string+'\n')
         writer.close()

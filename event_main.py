@@ -1,3 +1,4 @@
+#!/usr/bin/python3.5
 import preprocessing as pr
 
 columnToDel = [0,2,3,4,53,54,56,57]
