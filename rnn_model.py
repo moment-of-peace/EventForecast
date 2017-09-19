@@ -4,6 +4,7 @@ import os
 import keras.layers as kl
 import rnn_model as rnn
 
+
 # build a vector to represent the event type distibution
 def build_event_vec(fileName):
     vec = np.zeros(20, dtype=np.int32)
