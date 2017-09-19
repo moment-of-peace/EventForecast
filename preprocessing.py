@@ -1,5 +1,8 @@
 import os
 import logger
+from urllib.parse import urlparse
+import operator
+
 '''
     This file contains a set of functions that are helpful for cleaning data and copy designated data
     into the new files
@@ -34,7 +37,9 @@ def get_specified_data(path, countryColumn, country, attrColumn):
         for line in reader:
             columns = line.strip('\n').split('\t')
             for i in countryColumn:
-                if columns[i] == country: # match country
+                # have bug
+                #if columns[i] == country: # match country
+                if country in columns[i]:
                     count = count + 1
                     key = columns[attrColumn][:2] # for a event code, say 042, we just need 04
                     if key in dictionary.keys():
@@ -51,7 +56,62 @@ def get_specified_data(path, countryColumn, country, attrColumn):
 # write a dictionary to a file
 def dict_writer(writer, dictionary):
     for key, value in dictionary.items():
-        writer.write(key + ':' + str(value) + '\n')
+        writer.write(key + ': ' + str(value) + '\n')
+
+'''
+    function for extracting the events happened in the wanted countries
+    parameter:
+        fname: the name of the file that iftoberead
+        newfname: the name of output file
+        idxs: the columns that should be excluded in the output files
+        @return line_count
+'''
+def url_columns(path, idxs):
+    logger.log('start to get urls', logpath)
+    urldic = {}
+    newpath= 'url_' + path
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+
+    flist = os.listdir(path)  # all files in the directory
+    for f in flist:
+        fname, newfname = path+f, newpath+f
+        reader=open(fname,'r',encoding='utf-8')
+        writer=open(newfname,'w',encoding='utf-8')
+        for line in reader:
+            items=line.strip('\n').split('\t')
+            try:
+                if 'Australia' not in items[36] or 'Australia' not in items[43]:
+                    continue
+            except Exception as e:
+                logger.log(str(line)+'  error', logpath)
+                logger.log(str(e), logpath)
+            string=''
+            for i in range(0,len(items)):
+                if i in idxs:
+                    # process url
+                    if i == 57:
+                        r = urlparse(items[i])
+                        string = string + str(r.scheme)+'://'+str(r.hostname)+'\t'+items[i]
+                        key = str(r.hostname)
+                        if key in urldic.keys():
+                            urldic[key] = urldic[key]+1
+                        else:
+                            urldic[key] = 1;
+                    else:
+                        string = string + items[i]+'\t'
+            writer.write(string+'\n')
+        writer.close()
+        reader.close()
+        logger.log('delete ' + fname + ' finished',logpath) # log info after each file is processed
+        
+    sortBKs = sorted(urldic.items(),key=lambda t:t[1]) 
+    for key, value in sortBKs:
+        with open('urllist.txt','a',encoding='utf-8') as uf:
+            uf.write(key + '\t' + str(value) + '\n')
+    logger.log('finish get urls', logpath)
+    return newpath
+
 
 '''
     function for extracting the events happened in the wanted countries
@@ -75,11 +135,10 @@ def del_columns(path, idxs):
             items=line.strip('\n').split('\t')
             string=''
             for i in range(0,len(items)):
-                if i not in idxs:
+                if i in idxs:
                     string = string + items[i]+'\t'
             writer.write(string+'\n')
         writer.close()
         reader.close()
         logger.log('delete ' + fname + ' finished',logpath) # log info after each file is processed
     return newpath
-
