@@ -2,7 +2,6 @@ import numpy as np
 import os
 
 import keras.layers as kl
-import rnn_model as rnn
 
 # build a vector to represent the event type distibution
 def build_event_vec(fileName):
