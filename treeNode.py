@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #variables:
 #name of the node, a count
 #nodelink used to link similar items
@@ -133,9 +133,9 @@ def findFP(myHeaderTab):
     preFix=[]
     freqItemList=[]
     mineTree('',myHeaderTab,3,preFix,freqItemList)
-    for item in freqItemList:
-        if len(item)<2:
-            freqItemList.remove(item)
+    #for item in freqItemList:
+        #if len(item)<2:
+            #freqItemList.remove(item)
     return freqItemList
     
 
@@ -156,7 +156,7 @@ findPrefixPath(myHeaderTab['r'][1])
 freqItemList=findFP()
 freqItemList
 """
-=======
+
 #variables:
 #name of the node, a count
 #nodelink used to link similar items
@@ -291,11 +291,12 @@ def findFP(myHeaderTab):
     preFix=[]
     freqItemList=[]
     mineTree('',myHeaderTab,3,preFix,freqItemList)
-    for item in freqItemList:
+    """for item in freqItemList:
         if len(item)<2:
-            freqItemList.remove(item)
+            freqItemList.remove(item)"""
     return freqItemList
-    
+
+
 
 """rootNode = treeNode('pyramid',9,None)
 rootNode.children['eye'] = treeNode('eye',13,None)
@@ -314,4 +315,3 @@ findPrefixPath(myHeaderTab['r'][1])
 freqItemList=findFP()
 freqItemList
 """
->>>>>>> origin/master

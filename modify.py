@@ -34,7 +34,7 @@ def read(path,event_id):
     flist=os.listdir(path)
     for f in flist:
         dic=day_item(f,event_id)
-        list=day_list(dic,500)
+        list=day_list(dic,1000)
         monthDat.append(list)
     return monthDat	
 
