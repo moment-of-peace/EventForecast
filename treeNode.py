@@ -1,5 +1,3 @@
-
-
 #variables:
 #name of the node, a count
 #nodelink used to link similar items
