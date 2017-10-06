@@ -23,14 +23,14 @@ fid.close()
 '''
 
 def get_specified_data(path, countryColumn, country, attrColumn):
-    newpath = 'attr_' + country + '_' + path
+    newpath = path + '_attr/'
     if not os.path.exists(newpath):
         os.makedirs(newpath)
 
     flist = os.listdir(path)  # all files in the directory
     for f in flist:
         count = 0
-        fname, newfname = path+f, newpath+f
+        fname, newfname = path+'/'+f, newpath+f
         dictionary = {} # store how many times each attributes occures
         reader=open(fname,'r',encoding='utf-8')
         writer=open(newfname,'w',encoding='utf-8')
