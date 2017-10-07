@@ -84,7 +84,7 @@ testData = build_train_set(flist, trainSize, trainSize+testSize, step)
 print('3')
 testResult = build_train_result(flist, trainSize, trainSize+testSize, step)
 print('4')
-'''
+
 # tain model
 model = km.Sequential()
 model.add(kl.LSTM(DIM, input_shape=(step, DIM), activation='relu'))
@@ -105,4 +105,4 @@ for i in range(testSize):
     errorSum = errorSum + diff * diff
 errorAve = errorSum / testSize
 print('average error: %f'%(errorAve))
-'''
+

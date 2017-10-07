@@ -1,8 +1,12 @@
+# ecpilse file
 .project
 .pydevproject
+
+# data
 test*
 *.csv
 *.CSV
+__data__/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
