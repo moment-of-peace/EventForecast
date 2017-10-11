@@ -2,16 +2,21 @@ import os
 import pickle
 
 import numpy as np
-import keras.layers as kl
-import keras.models as km
-import gensim
+from keras.models import Sequential
+from keras.layers import Flatten, Dropout, Dense 
+from keras.layers.convolutional import Conv1D
+from keras.layers.convolutional import MaxPooling1D
+from keras.layers.embeddings import Embedding
+from keras.layers.recurrent import LSTM
+import keras.optimizers as opt
+#import gensim
 
-LEN = 1500  # the input length
+LEN = 500  # the input length
 
 # index and embed raw text
 def gen_embed_model(modelFile):
     vocab = {}  # {'word': index, ...}
-    with open(modelFile,'r') as f:
+    with open(modelFile, 'r') as f:
         line = f.readline()
         [length, dim] = line.split(' ')
         vec = np.zeros((int(length)+1, int(dim)), dtype = np.float64)    # {index: [vector], ...}
@@ -57,33 +62,29 @@ def compute_result(attrs):
 def padding(data):
     length = len(data)
     if length < LEN:
-        shape = data[0].shape
         for i in range(length,LEN):
-            data.append(np.zeros(shape))
+            data.append(0)
     elif length > LEN:
         data = data[:LEN]
     return data
 
 # generate datasets used for training and testing
 # extract_data changed !
-def gen_datasets(path, w2vfile):
-    w2vModel = gensim.models.KeyedVectors.load_word2vec_format(w2vfile, binary=False)
+def gen_datasets(path, vocab):
     trainData, trainResult = [], []
-    flist = os.listdir(path)
     num = 0
-    for f in flist:
-        with open(os.path.join(path,f) ,'r') as src:
-            for line in src:
-                num += 1
-                if num%100 == 0:
-                    print(num)
-                # remove trail line feed and white space
-                data, result = extract_data(line.strip('\n').strip(' '), w2vModel)
-                trainData.append(data)
-                trainResult.append(result)
-    testData, testResult = np.array(trainData[-1000:]), np.array(trainResult[-1000:])
-    trainData = np.array(trainData[:-1000])
-    trainResult = np.array(trainResult[:-1000])
+    with open(path ,'r') as src:
+        line = src.readline().strip('\n')
+        while line != '':
+            num += 1
+            # remove trail line feed and white space
+            data, result = extract_data(line.strip(' '), vocab)
+            trainData.append(data)
+            trainResult.append(result)
+            line = src.readline().strip('\n')
+    testData, testResult = np.array(trainData[-500:]), np.array(trainResult[-500:])
+    trainData = np.array(trainData[:-500])
+    trainResult = np.array(trainResult[:-500])
     return trainData, trainResult, testData, testResult
 
 # extract input data and results from a file
@@ -104,28 +105,52 @@ def train_data_generator(dataPath, limit, vocab):
     index = 0
     while True:
         inputs, targets = build_dataset('%s%d'%(dataPath, index), vocab)
+        print(index)
         yield (inputs, targets)
         index += 1
         if index == limit:
             index = 0
 '''
 path = 'news_ave'
-w2vfile = 'glove100_gensim.txt'
+w2vfile = 'glove50_gensim.txt'
 #trainData, trainResult, testData, testResult = gen_datasets(path, w2vfile)
 vocab, embedModel = gen_embed_model(w2vfile)   # vocab: {word: index, ...} embedModel: np array
-'''
+with open('vocab_glove50.pkl','wb') as handle:
+    pickle.dump(vocab, handle)
+np.save('w2v_weights_glove50.npy',embedModel)
 
 '''
-with open('vocab_glove100.pickle', 'rb') as handle:
+with open('vocab_glove50.pkl', 'rb') as handle:
     vocab = pickle.load(handle)
-embedModel = np.load('w2v_weights_glove100.npy')
-'''
-'''
+embedModel = np.load('w2v_weights_glove50.npy')
+
+path = 'newsdata_64/news_data_0'
+w2vfile = 'glove50_gensim.txt'
+trainData, trainResult, testData, testResult = gen_datasets(path, vocab)
+
 # build and fit model
-model = km.Sequential()
-model.add(kl.Embedding(400001,100, mask_zero=True,weights=[embedModel]))
-model.add(kl.LSTM(30,activation='relu'))
-model.add(kl.Dense(1))
+model = Sequential()
+model.add(Embedding(400001,50, input_length=LEN, mask_zero=True,weights=[embedModel]))
+model.add(LSTM(20,activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1))
+#sgd = opt.SGD(lr=0.1, decay=1e-2, momentum=0.9)
 model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit_generator(train_data_generator('newsdata_64/news_data_', 63, vocab), 63, epochs=2000, verbose=2, validation_data=None)
+model.fit_generator(train_data_generator('newsdata_64/news_data_', 5, vocab), 5, epochs=10, verbose=2, validation_data=None)
+#model.fit(trainData, trainResult, epochs=10, batch_size=30, verbose=2, validation_split = 0.05)
+
 '''
+# create the model
+model = Sequential()
+model.add(Embedding(400001, 50, input_length=LEN, mask_zero=False,weights=[embedModel]))
+model.add(Conv1D(filters=32, kernel_size=20, padding='same', activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Flatten())
+model.add(Dense(250, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+print(model.summary())
+model.fit(trainData, trainResult, epochs=20, batch_size=60, verbose=2, validation_split = 0.05)
+'''
+
+

@@ -128,7 +128,7 @@ def eval_model_ahead(model, testData, testResult, lookahead):
     return eval_model(predict, testResult)
 
 def main():
-    path, modelFile = None, None
+    path, modelFile = 'attr-aus', None
     epochs = 3000
     lookahead = 0
     step = 30
@@ -156,13 +156,13 @@ def main():
         model = km.load_model(modelFile)
     # predict
     predict = model.predict(testData)
-    # save truth and predict results
-    write_result('truth_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead), testResult)
-    write_result('predict_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead), predict)
-    print('truth and predicted result saved')
     error = eval_model(predict, testResult)
     print('average error: %f'%(error))
-
+    # save truth and predict results
+    write_result('truth_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead), testResult)
+    write_result('predict_%s_%d_%d_%d_%.4f.txt'%(path, epochs, step, lookahead, error), predict)
+    print('truth and predicted result saved')
+    
 if __name__ == '__main__':
     main()
 
