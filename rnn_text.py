@@ -11,7 +11,7 @@ from keras.layers.recurrent import LSTM
 import keras.optimizers as opt
 #import gensim
 
-LEN = 500  # the input length
+LEN = 750  # the input length
 
 # index and embed raw text
 def gen_embed_model(modelFile):
@@ -37,7 +37,7 @@ def gen_embed_model(modelFile):
             i = i+1
     return vocab, vec
 
-# extract data from one line of text
+# extract data from one line of text, require strip(' ') first
 # return np arrays
 def extract_data(line, model):
     content = line.split('\t')
@@ -48,7 +48,8 @@ def extract_data(line, model):
         try:
             data.append(model[word])
         except:
-            data.append(model['unk'])
+            pass
+            #data.append(model['unk'])
     # make every input have same length
     data = padding(data)
     return np.array(data), np.array(result)
@@ -56,7 +57,7 @@ def extract_data(line, model):
 # compute results based on the attributes
 def compute_result(attrs):
     # attrs: isroot, quadclass, glodstein, mentions, sources, articles, tone
-    return round((float(attrs[3]) + float(attrs[5]))/2, 2)
+    return round((float(attrs[3]) + float(attrs[5]))*float(attrs[6])/2, 2)
 
 # padding zeros
 def padding(data):
@@ -69,7 +70,6 @@ def padding(data):
     return data
 
 # generate datasets used for training and testing
-# extract_data changed !
 def gen_datasets(path, vocab):
     trainData, trainResult = [], []
     num = 0
@@ -82,10 +82,10 @@ def gen_datasets(path, vocab):
             trainData.append(data)
             trainResult.append(result)
             line = src.readline().strip('\n')
-    testData, testResult = np.array(trainData[-500:]), np.array(trainResult[-500:])
-    trainData = np.array(trainData[:-500])
-    trainResult = np.array(trainResult[:-500])
-    return trainData, trainResult, testData, testResult
+    testData, testResult = trainData[-500:], trainResult[-500:]
+    trainData = trainData[:-500]
+    trainResult = trainResult[:-500]
+    return np.array(trainData, dtype=np.int32), np.array(trainResult, dtype=np.float32), np.array(testData, dtype=np.int32), np.array(testResult, dtype=np.float32)
 
 # extract input data and results from a file
 def build_dataset(fileName, vocab):
@@ -98,17 +98,38 @@ def build_dataset(fileName, vocab):
             trainData.append(data)
             trainResult.append(result)
             line = src.readline().strip('\n')
-    return np.array(trainData), np.array(trainResult)
+    return trainData, trainResult
 
 # a generator used to fit the rnn model
 def train_data_generator(dataPath, limit, vocab):
+    total = 2528
     index = 0
     while True:
         inputs, targets = build_dataset('%s%d'%(dataPath, index), vocab)
-        print(index)
-        yield (inputs, targets)
+        for i in range(1, limit):
+            index += 1
+            if index == total:
+                index = 0
+            newInputs, newTargets = build_dataset('%s%d'%(dataPath, index), vocab)
+            inputs.extend(newInputs)
+            targets.extend(newTargets)
+        if index%50 == 0:
+            print(index)
+        yield (np.array(inputs, dtype=np.int32), np.array(targets, dtype=np.float32))
         index += 1
-        if index == limit:
+        if index == total:
+            index = 0
+def train_data_generator2(dataPath):
+    total = 2528
+    index = 0
+    while True:
+        inputs = np.load('%s%d%s'%(dataPath, index, '_x.npy'))
+        targets = np.load('%s%d%s'%(dataPath, index, '_y.npy'))
+        if index%50 == 0:
+            print(index)
+        yield inputs, targets
+        index += 1
+        if index == total:
             index = 0
 '''
 path = 'news_ave'
@@ -118,26 +139,30 @@ vocab, embedModel = gen_embed_model(w2vfile)   # vocab: {word: index, ...} embed
 with open('vocab_glove50.pkl','wb') as handle:
     pickle.dump(vocab, handle)
 np.save('w2v_weights_glove50.npy',embedModel)
-
 '''
-with open('vocab_glove50.pkl', 'rb') as handle:
+'''
+with open('vocab_8229_50.pkl', 'rb') as handle:
     vocab = pickle.load(handle)
-embedModel = np.load('w2v_weights_glove50.npy')
+
 
 path = 'newsdata_64/news_data_0'
 w2vfile = 'glove50_gensim.txt'
-trainData, trainResult, testData, testResult = gen_datasets(path, vocab)
-
+#trainData, trainResult, testData, testResult = gen_datasets(path, vocab)
+'''
+embedModel = np.load()
 # build and fit model
 model = Sequential()
 model.add(Embedding(400001,50, input_length=LEN, mask_zero=True,weights=[embedModel]))
-model.add(LSTM(20,activation='relu'))
+model.add(LSTM(50,activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(1))
+model.add(Dense(20,activation='sigmoid'))
+model.add(Dropout(0.5))
+model.add(Dense(1,activation='sigmoid'))
 #sgd = opt.SGD(lr=0.1, decay=1e-2, momentum=0.9)
 model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit_generator(train_data_generator('newsdata_64/news_data_', 5, vocab), 5, epochs=10, verbose=2, validation_data=None)
+model.fit_generator(train_data_generator2('news_50_bin/news_stem_'), 500, epochs=10, verbose=2, validation_data=None)
 #model.fit(trainData, trainResult, epochs=10, batch_size=30, verbose=2, validation_split = 0.05)
+model.save('text.h5')
 
 '''
 # create the model
