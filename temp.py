@@ -1,4 +1,5 @@
 from nltk.stem import WordNetLemmatizer
+import os
 '''
 import rnn_model as rm
 import keras
@@ -76,7 +77,69 @@ def search_url(number):
             if c[0] == number:
                 return c[57]
 
+# note: whether space after each line
+def build_corpus(path):
+    flist = os.listdir(path)
+    with open('corpus.txt', 'w') as tar:
+        for f in flist:
+            string = ''
+            with open(os.path.join(path,f), 'r') as src:
+                line = src.readline().strip('\n')
+                while line != '':
+                    string = string + line.split('\t')[-1] + ' '
+                    line = src.readline().strip('\n')
+                tar.write(string)
+
+def isNum(c):
+    if ord(c) > 47 and ord(c) < 58:
+        return True
+    else:
+        return False
+def num_to_word(num):
+    if num < 10:
+        return 'several'
+    elif num < 100:
+        return 'ten'
+    elif num < 1000:
+        return 'hundred'
+    elif num < 10000:
+        return 'thousand'
+    elif num < 5000000:
+        return 'million'
+    elif num < 5000000000:
+        return 'billion'
+    else:
+        return 'huge amount'
+def convert_num(path):
+    newPath = 'news_50_num'
+    flist = os.listdir(path)
+    for f in flist:
+        string = ''
+        with open(os.path.join(path,f), 'r') as src:
+            line = src.readline().strip('\n')
+            while line != '':
+                index = line.rfind('\t')
+                string = string + line[:index] + '\t'
+                content = line[index+1:].strip(' ')
+                temp = ''
+                for i in range(len(content)):   # remove space between numbers
+                    if content[i] != ' ':
+                        temp += content[i]
+                    elif (not isNum(content[i-1])) or (not isNum(content[i+1])):
+                        temp += content[i]
+                for e in temp.split(' '):
+                    if isNum(e[0]):
+                        string = string + num_to_word(int(e)) + ' '
+                    else:
+                        string = string + e + ' '
+                string = string.strip(' ')
+                string = string + '\n'
+                line = src.readline().strip('\n')
+        with open(os.path.join(newPath,f), 'w') as tar:
+            tar.write(string)
 #split_file('tmp',4)
 #check('common_words2.txt')
 #clean_common_words('common_words.txt')
 #stem_words('common_words2.txt')
+build_corpus('news_50_num/')
+#convert_num('__data__/news_50/')

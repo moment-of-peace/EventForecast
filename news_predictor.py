@@ -4,6 +4,8 @@ import pickle
 import numpy as np
 import keras.models as km
 
+import nlp_preprocessing as pre
+
 # extract data from one line of text
 # return np arrays
 def extract_data(source, vocab):
@@ -12,14 +14,15 @@ def extract_data(source, vocab):
         try:
             data.append(vocab[word])
         except:
-            data.append(vocab['unk'])
+            pass
+            #data.append(vocab['unk'])
     # make every input have same length
     data = padding(data)
     return np.array(data)
 
 # padding zeros
 def padding(data):
-    LEN = 1500
+    LEN = 500
     length = len(data)
     if length < LEN:
         for i in range(length,LEN):
@@ -28,16 +31,20 @@ def padding(data):
         data = data[:LEN]
     return data
 
-string  # require the raw news, no need of preprocessing
-vocab_file = 'vocab_glove50.pkl'
+###############################################################################################
+
+string = 'require the raw news, no need of preprocessing $100 399km ^* is the'  # require the raw news, no need of preprocessing
+w2vFile = 'event100'
+vocabFile = 'vocab_%s.pkl'%(w2vFile)
+weightsfile = 'weights_%s.npy'%(w2vFile)
 stop_word_list = 'stop_words2.txt'
-model_file = 'hot_news_predict.h5'
+modelFile = 'hot_news_predict.h5'
 
 # load predict model
-model = keras.load_model(model_file)
+model = km.load_model(modelFile)
 
 # load vocabulary used for word indexing
-with open(vocab_file, 'rb') as handle:
+with open(vocabFile, 'rb') as handle:
     vocab = pickle.load(handle)
 
 # load stop word list
@@ -50,10 +57,16 @@ with open(stop_word_list, 'r') as f:
 content = re.split('[^a-zA-Z0-9$]', string.lower())
 words = ''
 for e in content:
-    if e != '' and (word not in stopWords):
+    if e != '' and (e not in stopWords):
         words = words + e + ' '
+
+# split letters, numbers and signals
+words = pre.split_num_letter(words)
+# stem words
+words = pre.stem_single_stop(words, stopWords)
 
 # indexing, convert text to vector
 data = extract_data(words.strip(' '), vocab)
-prdict = model.predict(np.array([data]))
-
+predict = model.predict(np.array([data]))
+result = predict[0][0]
+#print(result, words)

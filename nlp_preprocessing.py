@@ -13,6 +13,32 @@ def load_word_list(fileName):
             words.add(line.strip('\n'))
     return words
 
+# index and embed raw text
+def gen_embed_model(modelFile):
+    vocab = {}  # {'word': index, ...}
+    with open(modelFile, 'r') as f:
+        line = f.readline()
+        [length, dim] = line.split(' ')
+        vec = np.zeros((int(length)+1, int(dim)), dtype = np.float64)    # {index: [vector], ...}
+        line = f.readline().strip('\n')
+        i = 1
+        while line != '':
+            index = line.find(' ')
+            word = line[:index]
+            vector = []
+            for e in line[index+1:].split(' '):
+                try:
+                    vector.append(float(e))
+                except Exception:
+                    print('float' + e)
+            vocab[word] = i
+            vec[i] = np.array(vector)
+            line = f.readline().strip('\n')
+            i = i+1
+    with open('vocab.pkl','wb') as handle:
+        pickle.dump(vocab, handle)
+    np.save('weights.npy', vec)
+
 # remove stop words, convert to lower case, remove meaningless signals
 def clean_news(path, stop_word_list):
     num = 0
@@ -253,7 +279,7 @@ def build_vocab_weights(commonWordFile, w2vFile):
             length += 1
     index = 1
     vocab = dict()
-    weights = np.zeros((length+1, dim), dtype=np.float32)    # {index: [vector], ...}
+    weights = np.zeros((length+1, dim), dtype=np.float64)    # {index: [vector], ...}
     model = gensim.models.KeyedVectors.load_word2vec_format(w2vFile, binary=False)
     # generate weights only for common words
     for word in commonWords:
@@ -335,7 +361,7 @@ def build_batch_data(path, vocabFile, commonWordsFile):
         fileName = os.path.join(path,f)
         tx, ty = build_dataset(fileName, vocab, commonWords)
         np.save(f+'_x.npy', np.array(tx, dtype=np.int32))
-        np.save(f+'_y.npy', np.array(ty, dtype=np.float32))
+        np.save(f+'_y.npy', np.array(ty, dtype=np.float64))
         
 #clean_news('news_201304', 'stop_words2.txt')
 #matchId('201304now','news_clean')
@@ -343,4 +369,5 @@ def build_batch_data(path, vocabFile, commonWordsFile):
 #stem_words('news_data', 'stop_words_clean.txt')
 #build_vocab_weights('common_words_8299.txt', 'glove50_gensim.txt')
 #generate_batch_file('news_stem',50)
-build_batch_data('news_50', 'vocab_glove50.pkl', 'common_words_1k.txt')
+#build_batch_data('news_50', 'vocab_glove50.pkl', 'common_words_1k.txt')
+#gen_embed_model('__data__/glove100_gensim.txt')
