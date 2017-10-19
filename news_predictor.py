@@ -34,7 +34,7 @@ def padding(data):
 ###############################################################################################
 
 string = 'require the raw news, no need of preprocessing $100 399km ^* is the'  # require the raw news, no need of preprocessing
-w2vFile = 'event100'
+w2vFile = 'glove50'
 vocabFile = 'vocab_%s.pkl'%(w2vFile)
 weightsfile = 'weights_%s.npy'%(w2vFile)
 stop_word_list = 'stop_words2.txt'
