@@ -58,9 +58,7 @@ def build_event_dataset(flist, start=0, end=None):
 # build dataset used for rnn training
 def build_train_data(flist, start, end, step):
     trainSet = np.zeros((end-start, step, DIM), dtype=np.int32)
-    print('b')
     for i in range(start, end):
-        #print(i)
         trainSet[i-start,:,:] = build_event_dataset(flist, i, i+step)
     return trainSet
 
@@ -82,25 +80,27 @@ def write_result(filename, data):
             f.write('\n')
 
 # build datasets
-def build_datasets(path, trainSize=1500, testSize=60, step=30, lookahead=0):
+def build_datasets(path, trainSize=1500, testSize=60, step=30, lookahead=1):
     print('build training data')
     flist = sort_file_list(path)# build training and test datasets
     trainData = build_train_data(flist, 0, trainSize, step)
     print('build training result')
-    trainResult = build_train_result(flist, 0, trainSize, step, lookahead)
+    #result = build_train_result(flist, 0, trainSize, step, lookahead)
+    trainResult = build_train_data(flist, lookahead, trainSize+lookahead, step)
     print('build test data')
     testData = build_train_data(flist, trainSize, trainSize+testSize, step)
     print('build test result')
-    testResult = build_train_result(flist, trainSize, trainSize+testSize, step, lookahead)
+    #testResult = build_train_result(flist, trainSize, trainSize+testSize, step, lookahead)
+    testResult = build_train_data(flist, trainSize+lookahead, trainSize+testSize+lookahead, step)
     print('all datasets built')
     return trainData, trainResult, testData, testResult
 
 # train model
 def train_model(trainData, trainResult, step=30, epochs=3000):
     model = km.Sequential()
-    model.add(kl.LSTM(DIM, input_shape=(step, DIM), activation='relu'))
+    model.add(kl.LSTM(DIM, input_shape=(step, DIM), return_sequences=True, activation='relu'))
     #model.add(kl.LSTM(DIM, input_dim = DIM, input_length = step, activation='sigmoid'))
-    model.add(kl.Dense(DIM))
+    model.add(kl.TimeDistributed(kl.Dense(DIM)))
     model.compile(loss='mean_squared_error', optimizer='adam')
     model.fit(trainData, trainResult, epochs=epochs, batch_size=32, verbose=2, validation_split = 0.05)
     return model
@@ -109,28 +109,16 @@ def train_model(trainData, trainResult, step=30, epochs=3000):
 def eval_model(predict, testResult):
     errorSum = 0
     for i in range(predict.shape[0]):
-        diff = sum(predict[i,:] - testResult[i,:]) / sum(testResult[i,:])
-        errorSum = errorSum + diff * diff
-    errorAve = errorSum / predict.shape[0]
+        for j in range(predict.shape[1]):
+            diff = sum(abs(predict[i,j,:] - testResult[i,j,:])) / sum(testResult[i,j,:])
+            errorSum += diff
+    errorAve = errorSum / predict.shape[0] / predict.shape[1]
     return errorAve
-def eval_model_ahead(model, testData, testResult, lookahead):
-    shape = testData.shape
-    predict = np.zeros([shape[0], shape[2]])
-    data = np.zeros([1,shape[1],shape[2]])
-    for i in range(shape[0]):
-        data[0] = testData[i]
-        result = model.predict(data)
-        for j in range(lookahead):
-            data[0,:-1] = data[0,1:]
-            data[0,-1] = result
-            result = model.predict(data)
-        predict[i] = result[0]
-    return eval_model(predict, testResult)
 
 def main():
     path, modelFile = 'attr-aus', None
     epochs = 3000
-    lookahead = 0
+    lookahead = 1
     step = 30
     # parse arguments
     options,args = getopt.getopt(sys.argv[1:],"p:a:e:m:s:")
@@ -155,12 +143,16 @@ def main():
         print('load model from: ' + modelFile)
         model = km.load_model(modelFile)
     # predict
-    predict = model.predict(testData)
-    error = eval_model(predict, testResult)
+    predictResult = model.predict(testData)
+    x,y = np.zeros([predictResult.shape[0],min(lookahead,step),DIM]), np.zeros([predictResult.shape[0],min(lookahead,step),DIM])
+    for i in range(predictResult.shape[0]):
+        x[i] = predictResult[i,-lookahead:]
+        y[i] = testResult[i,-lookahead:]
+    error = eval_model(x, y)
     print('average error: %f'%(error))
     # save truth and predict results
     write_result('truth_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead), testResult)
-    write_result('predict_%s_%d_%d_%d_%.4f.txt'%(path, epochs, step, lookahead, error), predict)
+    write_result('predict_%s_%d_%d_%d_%.4f.txt'%(path, epochs, step, lookahead, error), predictResult)
     print('truth and predicted result saved')
     
 if __name__ == '__main__':
