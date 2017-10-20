@@ -13,8 +13,8 @@ Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09
 
 Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
 *****************************************************************************
-Usage of occurrence predictoin model (required libraries: numpy, scipy, tensorflow, keras, h5py):
-for example: cmd > pip install numpy 
+### Occurrence Predictoin Model 
+Environment: numpy, scipy, tensorflow, keras, h5py
 python3 rnn_model.py [option parameter]
 
 -p: the path of precessed events records
@@ -25,7 +25,8 @@ python3 rnn_model.py [option parameter]
 
 -e: training epochs
 
-## Usage of popularity (hot topics) prediction (required libraries: numpy, scipy, tensorflow, keras, h5py, gensim):
+### Popularity (hot news) Prediction 
+Environment: numpy, scipy, tensorflow, keras, h5py, gensim
 
 python3 rnn_text.py
 *****************************************************************************
