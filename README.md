@@ -25,16 +25,24 @@ python3 rnn_model.py [option parameter]
 python3 rnn_text.py
 *****************************************************************************
 Cluster R language:
+
 1.copy the exact data in test.xlsx (X to AP)
+
 2.z=read.table("clipboard",header=T)//import data in to z
+
 3.km <- kmeans(z[,1:20], 3)//use build-in Kmeans function
+
 4.km//print km results
 
 ******************************************************************************
 software:Tableau public
+
 username: shijie.zhang@uqnnect.edu.au
+
 password: 011010642zsj
+
 due to the public version, we cannot import the actual graph in Tableau. hence, please login our
+
 account and check presentation1 and presentation2.
 
 *******************************************************************************
