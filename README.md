@@ -1,3 +1,8 @@
+<div>
+<img src="https://github.com/moment-of-peace/EventForecast/blob/master/2015-event-forecast-art_0.JPG"></img>
+</div>
+
+-----------------------
 # EventForecast
  A group data mining project using Python that aim at predicting the probability of occurence of particular events and the popularity of events.
 ****************************************************************************
