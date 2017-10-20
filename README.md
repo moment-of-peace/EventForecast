@@ -25,7 +25,7 @@ python3 rnn_model.py [option parameter]
 
 -e: training epochs
 
-# Usage of popularity (hot topics) prediction (required libraries: numpy, scipy, tensorflow, keras, h5py, gensim):
+## Usage of popularity (hot topics) prediction (required libraries: numpy, scipy, tensorflow, keras, h5py, gensim):
 
 python3 rnn_text.py
 *****************************************************************************
