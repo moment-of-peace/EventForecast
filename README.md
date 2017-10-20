@@ -30,7 +30,8 @@ Environment: numpy, scipy, tensorflow, keras, h5py, gensim
 
 python3 rnn_text.py
 *****************************************************************************
-Cluster R language:
+### Cluster 
+Environment: R language:
 
 1.copy the exact data in test.xlsx (X to AP)
 
@@ -40,15 +41,3 @@ Cluster R language:
 
 4.km//print km results
 
-******************************************************************************
-software:Tableau public
-
-username: shijie.zhang@uqnnect.edu.au
-
-password: 011010642zsj
-
-due to the public version, we cannot import the actual graph in Tableau. hence, please login our
-
-account and check presentation1 and presentation2.
-
-*******************************************************************************
