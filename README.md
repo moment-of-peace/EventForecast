@@ -13,7 +13,7 @@ Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09
 
 Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
 *****************************************************************************
-### Occurrence Predictoin Model 
+### Occurrence Prediction Model 
 Environment: numpy, scipy, tensorflow, keras, h5py
 python3 rnn_model.py [option parameter]
 
