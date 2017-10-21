@@ -4,9 +4,9 @@
 
 -----------------------
 # EventForecast
- A group data mining project using Python that aim at predicting the probability of occurence of particular events and the popularity of events.
+A group data mining project using deep learning (LSTM) aiming at predicting the probability of occurence of particular events and the popularity of events.
 ****************************************************************************
-# dataset
+### dataset
 Source data: https://www.gdeltproject.org/data.html
 
 Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09SmJ2VGh5VkstR2c/view?usp=sharing
@@ -15,18 +15,19 @@ Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
 *****************************************************************************
 ### Occurrence Prediction Model 
 Environment: numpy, scipy, tensorflow, keras, h5py
+
 python3 rnn_model.py [option parameter]
 
 -p: the path of precessed events records
 
 -s: step size, how many past days to consider
 
--a: how many days look ahead
+-a: how many days look ahead (which day in the future to predict)
 
 -e: training epochs
 
 ### Popularity (hot news) Prediction 
-Environment: numpy, scipy, tensorflow, keras, h5py, gensim
+Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim
 
 python3 rnn_text.py
 *****************************************************************************
