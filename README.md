@@ -1,8 +1,8 @@
 <div>
 <img src="https://github.com/moment-of-peace/EventForecast/blob/master/data/event-forecast-art_0.JPG"></img>
 </div>
-
 -----------------------
+website: https://github.com/moment-of-peace/EventForecast
 # EventForecast
 A group data mining project using deep learning (LSTM) aiming at predicting the probability of occurence of particular events and the popularity of events.
 ****************************************************************************
