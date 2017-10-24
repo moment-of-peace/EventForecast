@@ -5,6 +5,11 @@ from nltk.stem import WordNetLemmatizer
 import pickle
 import numpy as np
 
+'''
+functions used for some special preprocessings for text analysis
+including removing stop words and common words, stemming, and so on
+'''
+
 # load a list of words, such as stop words, common words from a text file
 def load_word_list(fileName):
     words = set()

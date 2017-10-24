@@ -51,4 +51,7 @@ Environment: R language:
 3.km <- kmeans(z[,1:20], 3)//use build-in Kmeans function
 
 4.km//print km results
-
+*****************************************************************************
+### Other files
+preprocessing.py: general preprocessing, including removing useless data, extract and count events and so on.
+nlp_preprocessing.py: special preprocessing for text analysis, including removing common words, stemming, and so on

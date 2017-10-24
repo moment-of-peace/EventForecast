@@ -1,25 +1,17 @@
 import os
-import logger
 from urllib.parse import urlparse
 import operator
 
 '''
-    This file contains a set of functions that are helpful for cleaning data and copy designated data
-    into the new files
+    This file contains a set of functions that are used for data cleaning and extraction
 '''
 logpath='cleaning.log'
 fid = open(logpath, 'w') #create empty log file
 fid.close()
 
 '''
-    this function is used for extracting the events that are satisfied with the set value of specified column
-    parameters:
-        fname: the name of readed file
-        oname: the name of writed file
-        col: the index of the column
-        value: the value of colnum
-        writerpath: the path of the directory of cleaned data
-        @return line_count:the count of copied lines
+    this function is used for extracting the events in a specified country
+    
 '''
 
 def get_specified_data(path, countryColumn, country, attrColumn):
@@ -50,7 +42,7 @@ def get_specified_data(path, countryColumn, country, attrColumn):
         dict_writer(writer, dictionary) # write the dictionary to a file
         writer.close()
         reader.close()
-        logger.log('attr processing of ' + fname + ' finished',logpath) # log info after each file is processed
+        log('attr processing of ' + fname + ' finished',logpath) # log info after each file is processed
     return newpath
 
 # write a dictionary to a file
@@ -67,7 +59,7 @@ def dict_writer(writer, dictionary):
         @return line_count
 '''
 def url_columns(path, idxs):
-    logger.log('start to get urls', logpath)
+    log('start to get urls', logpath)
     urldic = {}
     newpath= 'url_' + path
     if not os.path.exists(newpath):
@@ -84,8 +76,8 @@ def url_columns(path, idxs):
                 if 'Australia' not in items[36] or 'Australia' not in items[43]:
                     continue
             except Exception as e:
-                logger.log(str(line)+'  error', logpath)
-                logger.log(str(e), logpath)
+                log(str(line)+'  error', logpath)
+                log(str(e), logpath)
             string=''
             for i in range(0,len(items)):
                 if i in idxs:
@@ -103,23 +95,18 @@ def url_columns(path, idxs):
             writer.write(string+'\n')
         writer.close()
         reader.close()
-        logger.log('delete ' + fname + ' finished',logpath) # log info after each file is processed
+        log('delete ' + fname + ' finished',logpath) # log info after each file is processed
         
     sortBKs = sorted(urldic.items(),key=lambda t:t[1]) 
     for key, value in sortBKs:
         with open('urllist.txt','a',encoding='utf-8') as uf:
             uf.write(key + '\t' + str(value) + '\n')
-    logger.log('finish get urls', logpath)
+    log('finish get urls', logpath)
     return newpath
 
 
 '''
-    function for extracting the events happened in the wanted countries
-    parameter:
-        fname: the name of the file that iftoberead
-        newfname: the name of output file
-        idxs: the columns that should be excluded in the output files
-        @return line_count
+    used for cleaning useless columns
 '''
 def del_columns(path, idxs):
     newpath= 'del_' + path
@@ -140,5 +127,20 @@ def del_columns(path, idxs):
             writer.write(string+'\n')
         writer.close()
         reader.close()
-        logger.log('delete ' + fname + ' finished',logpath) # log info after each file is processed
+        log('delete ' + fname + ' finished',logpath) # log info after each file is processed
     return newpath
+
+'''
+    used to record the processing progress
+'''
+def log(s, logpath):
+	with open(logpath, 'a', encoding='utf-8') as logfile:
+		logfile.write(s+' '+str(datetime.datetime.now())+'\n')
+
+columns = [1,7,17,25,26,29,30,31,32,33,34,35,36,42,43,53,54]
+
+#clean_file_path = del_columns('data-2013/', columns)
+#print('cleaned file path: ' + clean_file_path)
+
+# notice: after delete, column index of a attr will change !
+#attr_path = get_specified_data(clean_file_path,[12],'Australia',4)

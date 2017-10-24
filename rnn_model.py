@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 import sys
 import getopt
@@ -76,7 +77,7 @@ def write_result(filename, data):
     with open(filename, 'w') as f:
         for line in data:
             for e in line:
-                f.write(str(e) + ' ')
+                f.write(str(e[-1]) + ' ')
             f.write('\n')
 
 # build datasets
@@ -115,6 +116,39 @@ def eval_model(predict, testResult):
     errorAve = errorSum / predict.shape[0] / predict.shape[1]
     return errorAve
 
+# plot the predict results and truth
+def plotDiagram(truthFile, predictFile):
+    col = 0
+
+    truth,predict = [],[]
+    with open(truthFile, 'r') as src:
+        for line in src:
+            truth.append(getNum(line))
+    with open(predictFile, 'r') as src:
+        for line in src:
+            predict.append(getNum(line))
+
+    tru = np.array(truth)
+    pre = np.array(predict)  
+    while True:
+        code = input('which event to plot? input an event code between 01 ~ 20, input 0 to quit\n')
+        col = int(code) - 1
+        if col == -1:
+            break
+        plt.title('Tendency diagram for event '+code)
+        plt.plot(tru[:,col],label='truth')
+        plt.plot(pre[:,col],label='prediction')
+        plt.grid()
+        plt.legend(loc='upper left')
+        plt.show()
+# asisstant function for plotDiagram, extract numbers from a line of text
+def getNum(line):
+    num = line.strip('\n').strip(' ').split(' ')
+    result = []
+    for e in num:
+        result.append(float(e))
+    return result
+
 def main():
     path, modelFile = 'attr-aus', None
     epochs = 3000
@@ -151,9 +185,13 @@ def main():
     error = eval_model(x, y)
     print('average error: %f'%(error))
     # save truth and predict results
-    write_result('truth_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead), testResult)
-    write_result('predict_%s_%d_%d_%d_%.4f.txt'%(path, epochs, step, lookahead, error), predictResult)
+    truthFile = 'truth_%s_%d_%d_%d.txt'%(path, epochs, step, lookahead)
+    predictFile = 'predict_%s_%d_%d_%d_%.4f.txt'%(path, epochs, step, lookahead, error)
+    write_result(truthFile, testResult)
+    write_result(predictFile, predictResult)
     print('truth and predicted result saved')
+    # plot truth and predict results
+    plotDiagram(truthFile, predictFile)
     
 if __name__ == '__main__':
     main()

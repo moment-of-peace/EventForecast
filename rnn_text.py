@@ -136,7 +136,7 @@ def train_data_generator2(dataPath, weights):
             index = 0
 
 # train rnn model. dataPath example: news_50/news_stem_
-def model_rnn(vocab, weights, dataPath, batchn, epoch):
+def model_rnn(vocab, weights, dataPath, batchn, epoch, repeat):
     global LEN
     global DIM
     global BATCH
@@ -156,21 +156,23 @@ def model_rnn(vocab, weights, dataPath, batchn, epoch):
     print(model.summary())
     #model.fit_generator(train_data_generator2('news_50_bin/news_stem_'), 500, epochs=10, verbose=2, validation_data=None)
     index = 0
-    while True:
+    while index < epoch:
         data, result = build_dataset('%s%d'%(dataPath, index%2528), vocab, weights=weights)
         for i in range(1, batchn):
             index += 1
             newData, newResult = build_dataset('%s%d'%(dataPath, index), vocab, weights=weights)
             data.extend(newData)
             result.extend(newResult)
-        model.fit(np.array(data, dtype=np.float64), np.array(result, dtype=np.float64), epochs=10, batch_size=BATCH, verbose=2, validation_data=(testx,testy))
+        model.fit(np.array(data, dtype=np.float64), np.array(result, dtype=np.float64), epochs=repeat, batch_size=BATCH, verbose=0, validation_data=(testx,testy))
         model.save('hotnews_r_%d_%d.h5'%(BATCH, index))
         predict = model.predict(testx)
+        error = 0
         for i in range(testy.shape[0]):
-            print(testy[i], predict[i])
+            error += abs(testy[i] - predict[i][0])/testy[i]
+            #print(testy[i], predict[i][0])
+        print('batch %d of %d, epoch %d, absolute error: %f'%(index%2528+1, 2528, int(index/2528)+1, error/testy.shape[0]))
         index += 1
-        if index > epoch:
-            return model
+    return model
 
 # train cnn model
 def model_cnn(vocab, weights, dataPath, batchn, epoch):
@@ -216,7 +218,8 @@ def main():
     dataPath = 'news_50_num/news_stem_'
     batchn = 1
     BATCH = 50*batchn
-    epoch = 50
+    epoch = 50*2528
+    repeat = 5
     LEN = 500
     usemodel = 'r'
     # parse arguments
@@ -225,7 +228,7 @@ def main():
         if opt == '-f':
             modelFile = para
         if opt == '-d':
-            dataPath = para
+            dataPath = os.path.join(para, 'news_stem_')
         if opt == '-b':
             batchn = int(para)
         if opt == '-l':
@@ -233,17 +236,17 @@ def main():
         if opt == '-m':
             usemodel = para
         if opt == '-e':
-            epochs = int(para)
-        
-    vocabFile = 'vocab_%s.pkl'%(modelFile)
-    w2vfile = 'weights_%s.npy'%(modelFile)
-    weights = np.load(w2vfile)  # load weights from file
+            epochs = int(para)*2528
+        if opt == '-r':
+            repeat = int(para)
+
+    weights = np.load('weights_%s.npy'%(modelFile))  # load weights from file
     DIM = weights.shape[1]
-    with open(vocabFile, 'rb') as handle:   # load vocabulary from file
+    with open('vocab_%s.pkl'%(modelFile), 'rb') as handle:   # load vocabulary from file
         vocab = pickle.load(handle)
     # train model
     if usemodel == 'r': # use rnn model
-        model = model_rnn(vocab, weights, dataPath, batchn, epoch)
+        model = model_rnn(vocab, weights, dataPath, batchn, epoch, repeat)
     else:   # use cnn model
         model = model_cnn(vocab, weights, dataPath, batchn, epoch)
     
