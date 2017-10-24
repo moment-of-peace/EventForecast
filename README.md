@@ -30,6 +30,7 @@ python3 rnn_model.py [option parameter]
 Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim. 
 
 python3 rnn_text.py [option parameter]
+
 -f: word2vec model file
 
 -d: processed news data (the "news-64" folder in the processed data link)
