@@ -13,23 +13,32 @@ Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09
 
 Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
 *****************************************************************************
-### Occurrence Prediction Model 
+### Occurrence Prediction 
 Environment: numpy, scipy, tensorflow, keras, h5py
 
 python3 rnn_model.py [option parameter]
 
--p: the path of precessed events records
+-p: the path of precessed events records for a certain country (any "attr-country" folder in the processed data link)
 
--s: step size, how many past days to consider
+-s: step size, how long history to consider
 
 -a: how many days look ahead (which day in the future to predict)
 
 -e: training epochs
 
-### Popularity (hot news) Prediction 
-Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim
+### Popularity (hot events) Prediction 
+Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim. 
 
-python3 rnn_text.py
+python3 rnn_text.py [option parameter]
+-f: word2vec model file
+
+-d: processed news data (the "news-64" folder in the processed data link)
+
+-b: batch
+
+-l: cutting length, i.e. how many words in the news to consider
+
+-e: training epochs
 *****************************************************************************
 ### Cluster 
 Environment: R language:
