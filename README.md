@@ -1,5 +1,5 @@
 <div>
-<img src="https://github.com/moment-of-peace/EventForecast/blob/master/data/event-forecast-art_0.JPG"></img>
+<img src="https://github.com/moment-of-peace/EventForecast/blob/master/data/event-forecast-art_0.png"></img>
 </div>
 -----------------------
 
