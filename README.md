@@ -14,6 +14,9 @@ Source data: https://www.gdeltproject.org/data.html
 Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09SmJ2VGh5VkstR2c/view?usp=sharing
 
 Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
+
+Processed news data and word embedding models for hot events prediction: 
+https://drive.google.com/drive/folders/0B_Qs_6HNIHS9Qk1hMzZ1c3VWOE0?usp=sharing
 *****************************************************************************
 ### Occurrence Prediction 
 Environment: numpy, scipy, tensorflow, keras, h5py
@@ -33,9 +36,7 @@ Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim.
 
 python3 rnn_text.py [option parameter]
 
--f: word2vec model file
-
--d: processed news data (the "news-64" folder in the processed data link)
+-d: processed news data (the "news_50_num" folder in the processed news data link)
 
 -b: batch
 
