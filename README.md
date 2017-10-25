@@ -19,7 +19,11 @@ Processed news data and word embedding models for hot events prediction:
 https://drive.google.com/drive/folders/0B_Qs_6HNIHS9Qk1hMzZ1c3VWOE0?usp=sharing
 *****************************************************************************
 ### Occurrence Prediction 
-Environment: numpy, scipy, tensorflow, keras, h5py
+Environment: numpy, scipy, tensorflow, keras, h5py, matplotlib
+
+Require at leat one "attr-county" folder provided by processed data link above
+
+Use following command to run (-p is compulsory, others are optional):
 
 python3 rnn_model.py [option parameter]
 
@@ -34,9 +38,12 @@ python3 rnn_model.py [option parameter]
 ### Popularity (hot events) Prediction 
 Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim. 
 
-python3 rnn_text.py [option parameter]
+Require folder "news_50_num", and word embedding files "vocab_event100.pkl", "weights_event100.npy"
+provided by the processed news data link above
 
--d: processed news data (the "news_50_num" folder in the processed news data link)
+Use following command to run (all options are optional):
+
+python3 rnn_text.py [option parameter]
 
 -b: batch
 
@@ -47,7 +54,7 @@ python3 rnn_text.py [option parameter]
 ### Cluster 
 Environment: R language:
 
-1.copy the exact data in test.xlsx (X to AP)
+1.copy the exact data in data/test.xlsx (X to AP)
 
 2.z=read.table("clipboard",header=T)//import data in to z
 
@@ -61,5 +68,7 @@ preprocessing.py: general preprocessing, including removing useless data, extrac
 nlp_preprocessing.py: special preprocessing for text analysis, including removing common words, stemming, and so on
 
 hot_news_php/ : files for the webpage application about hot news recommendation
+
+association_rule/ : codes association rules mining
 
 cluster/ : files and results for clustering
