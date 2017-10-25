@@ -57,3 +57,5 @@ Environment: R language:
 ### Other files
 preprocessing.py: general preprocessing, including removing useless data, extract and count events and so on.
 nlp_preprocessing.py: special preprocessing for text analysis, including removing common words, stemming, and so on
+hot_news_php/ : files for the webpage application about hot news recommendation
+cluster/ : files and results for clustering
