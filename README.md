@@ -14,15 +14,12 @@ Source data: https://www.gdeltproject.org/data.html
 
 Crawled news data on google drive: https://drive.google.com/file/d/0B--MjMVnQr09SmJ2VGh5VkstR2c/view?usp=sharing
 
-Processed data: https://drive.google.com/open?id=0B_YAORWAkCjrMHJFN25MY2tJQ00
-
-Processed news data and word embedding models for hot events prediction: 
-https://drive.google.com/drive/folders/0B_Qs_6HNIHS9Qk1hMzZ1c3VWOE0?usp=sharing
+Processed data: https://drive.google.com/drive/folders/0B_Qs_6HNIHS9Qk1hMzZ1c3VWOE0?usp=sharing
 *****************************************************************************
 ### Occurrence Prediction 
 Environment: numpy, scipy, tensorflow, keras, h5py, matplotlib
 
-Require at leat one "attr-county" folder provided by processed data link above
+Require at leat one "attr-county" folder provided by processed data link above (need to unzip first)
 
 Use following command to run (-p is compulsory, others are optional):
 
@@ -39,8 +36,8 @@ python3 rnn_model.py [option parameter]
 ### Popularity (hot events) Prediction 
 Environment: numpy, scipy, tensorflow, keras, nltk, h5py, gensim. 
 
-Require folder "news_50_num", and word embedding files "vocab_event100.pkl", "weights_event100.npy"
-provided by the processed news data link above
+Require folder "news_50_num" (need to unzip first), and word embedding files "vocab_event100.pkl", "weights_event100.npy"
+provided by the processed data link above
 
 Use following command to run (all options are optional):
 
